@@ -1,5 +1,5 @@
 site:
-  url: https://modellen.netbeheernederland.nl/name-authority-lists
+  url: https://modellen.netbeheernederland.nl/begrippenlijsten
   start_page: ROOT::index.adoc
 content:
   sources:

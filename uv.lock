@@ -45,7 +45,7 @@ wheels = [
 ]
 
 [[package]]
-name = "name-authority-lists"
+name = "nbnl-begrippenlijsten"
 version = "1.0"
 source = { virtual = "." }
 dependencies = [

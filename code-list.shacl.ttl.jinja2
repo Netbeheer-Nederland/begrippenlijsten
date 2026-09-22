@@ -1,14 +1,15 @@
-
-@prefix : <https://modellen.netbeheernederland.nl/begrippenlijsten/spanningsniveau/shacl#> .
+{% set base_iri = scheme["id"]["value"] | replace("#", "/shacl#") %}
+@prefix : <{{ base_iri }}> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 
 : a owl:Ontology .
     # owl:versionInfo "1.0" .
     
-:spanningsniveauShape a sh:NodeShape ;
+:{{ scheme["name"]["value"] }}Shape a sh:NodeShape ;
     sh:closed true ;
     skos:scopeNote "Users who wish to restrict properties to exclusively allow values from this code list can import this ontology and use this node shape." ;
     sh:in (
-        
+        {% for term in terms %}<{{ term["id"]["value"] }}>
+	{% endfor %}
     ) .

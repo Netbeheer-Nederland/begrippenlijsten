@@ -1,4 +1,4 @@
-@prefix : <https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#> .
+@prefix : <https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -9,9 +9,9 @@
 @prefix owl: <http://www.w3.org/2002/07/owl> .
 
 : a skos:ConceptScheme , owl:Ontology ;
-    dcterms:subject <https://begrippen.netbeheernederland.nl/id/x6zcz> ;
+    foaf:primaryTopic <https://begrippen.netbeheernederland.nl/id/x6zcz> ;
     skos:notation "netbeheerder" ;
-    dcterms:type "NBNL Name Authority List" ;
+    dcterms:type "NBNL Name Authority List" ;  # TODO: Should be a URI, preferably from some existing code list from - for example - the EU.
     dcterms:title "Netbeheerder"@nl .
     # dcterms:title "Netbeheerder"@nl ,
     #               "System operator"@en .

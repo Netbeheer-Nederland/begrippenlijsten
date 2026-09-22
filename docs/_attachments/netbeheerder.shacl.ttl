@@ -1,5 +1,5 @@
 
-@prefix : <https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder/shacl#> .
+@prefix : <https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder/shacl#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 
@@ -10,16 +10,16 @@
     sh:closed true ;
     skos:scopeNote "Users who wish to restrict properties to exclusively allow values from this code list can import this ontology and use this node shape." ;
     sh:in (
-        <https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#COTEQ>
-	<https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#EDSN>
-	<https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#ENEXIS>
-	<https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#ESSENT>
-	<https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#GASUNIE>
-	<https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#LIANDER>
-	<https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#NUON>
-	<https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#RENDO>
-	<https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#STEDIN>
-	<https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#TENNET>
-	<https://modellen.netbeheernederland.nl/name-authority-lists/netbeheerder#WESTLAND>
+        <https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#COTEQ>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#EDSN>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#ENEXIS>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#ESSENT>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#GASUNIE>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#LIANDER>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#NUON>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#RENDO>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#STEDIN>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#TENNET>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#WESTLAND>
 	
     ) .

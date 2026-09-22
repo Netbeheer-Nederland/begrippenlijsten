@@ -9,6 +9,15 @@ from pyoxigraph import *
 NAL_FILES_DIR = "src"
 ANTORA_COMPONENT_DIR = "_docs-adoc"
 
+def get_template(vocabType, assetFormat):
+    tmpl_file = {
+        "NBNL Name Authority List": f"name-authority-list.{assetFormat}.jinja2",
+        "NBNL Code List": f"code-list.{assetFormat}.jinja2",
+    }[vocabType]
+    tmpl = jinja2.Environment(loader=jinja2.FileSystemLoader(".")).get_template(tmpl_file)
+
+    return tmpl
+
 # Create Antora component
 shutil.rmtree(ANTORA_COMPONENT_DIR)
 os.makedirs(ANTORA_COMPONENT_DIR)
@@ -29,7 +38,7 @@ with open(os.path.join(ANTORA_COMPONENT_DIR, "modules", "ROOT", "nav.adoc"), "wt
 with open(os.path.join(ANTORA_COMPONENT_DIR, "antora.yml"), "wt") as f:
     f.write(textwrap.dedent(f'''
         name: ROOT
-        title: NBNL Name Authority Lists
+        title: NBNL Begrippenlijsten
         version: ~
         nav:
         - modules/ROOT/nav.adoc
@@ -49,11 +58,13 @@ for nal_file in os.listdir(NAL_FILES_DIR):
     scheme = json.loads(nal.query('''
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         SELECT *
         WHERE {
             ?id a skos:ConceptScheme ;
-                dcterms:subject ?subject ;
+                foaf:primaryTopic ?subject ;
+                dcterms:type ?vocabType ;
                 skos:notation ?name ;
                 dcterms:title ?title .
         }
@@ -75,14 +86,14 @@ for nal_file in os.listdir(NAL_FILES_DIR):
      ''').serialize(format=QueryResultsFormat.JSON))["results"]["bindings"], key=lambda t: t["id"]["value"])
 
     # Generate documentation
-    adoc_template = jinja2.Environment(loader=jinja2.FileSystemLoader(".")).get_template("name-authority-list.adoc.jinja2")
+    adoc_template = get_template(scheme["vocabType"]["value"], "adoc")
     adoc = adoc_template.render(scheme=scheme, terms=terms)
 
     with open(os.path.join(pages_dir, scheme["name"]["value"] + ".adoc"), "wt") as f:
         f.write(adoc)
 
     # Generate SHACL
-    shacl_template = jinja2.Environment(loader=jinja2.FileSystemLoader(".")).get_template("name-authority-list.shacl.ttl.jinja2")
+    shacl_template = get_template(scheme["vocabType"]["value"], "shacl.ttl")
     shacl = shacl_template.render(scheme=scheme, terms=terms)
 
     with open(os.path.join(attachments_dir, scheme["name"]["value"] + ".shacl.ttl"), "wt") as f:
