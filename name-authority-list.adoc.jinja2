@@ -7,10 +7,10 @@ Artefacten::
 * xref::attachment${{ scheme["name"]["value"] }}.skos.ttl[SKOS concept scheme (Turtle),window=read-later]
 * xref::attachment${{ scheme["name"]["value"] }}.shacl.ttl[SHACL shapes graph (Turtle),window=read-later]
 
-== Names
+== Namen
 
 |===
-| Name | Code | Webpagina
+| Naam | Code | Webpagina
 
 {% for term in terms if not term["status"]["value"] == "https://inspire.ec.europa.eu/registry/status/invalid" %}
 | [[{{ term["code"]["value"] }}]]{{ term["id"]["value"] }}[*{{ term["prefLabel"]["value"] }}*]
