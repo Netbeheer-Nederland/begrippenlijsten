@@ -1,0 +1,170 @@
+= Usage Guide
+A **controlled vocabulary** is a set of terms owned and maintained by an authority. Their goal is to represent knowledge in natural language organized in a simple structure for humans to be used. Typically, controlled vocabularies are rich in semantics, which may include labels, definitions, titles, notes of all kinds, etc., but also governance-related metadata. Controlled vocabularies are a business product.
+
+By organizing terms from a domain in controlled vocabularies, language used or agreed upon can be made explicit and referenced. It is a means of enforcing - or at the very least, stimulating - a common language to be used. When a globally unique and persistent (FAIR F1) identifier is assigned to terms, they can also be unambiguously referenced in databases, software applications and datasets.
+
+**Enumerations**, on the other hand, are a means in data models and programming which enable representing fixed sets of permissible values in data. Their goal is to validate or constrain values in data, which is decidedly meant for IT purposes and for processing by machines. In most languages or technologies, enumerations are very simple and do not provide much information at all - if any - about the meaning of the permissible values.
+
+In practice, enumerations are often reused only within a single application. Using libraries or schema languages enumerations, can be shared across application boundaries, and in some languages - but certainly not all - those can be extended, but usually the flexibility of reusing enumerations is limited. In the Semantic Web space, however, we are all about flexibility, and there it is almost trivial to use controlled terms as enumeration values, and to reuse enumeration shapes and even compose several, including ad-hoc values. We will cover all of this.
+
+== Enumerations in SHACL
+=== Hello, world!
+
+Suppose we want to restrict the permissible values for colors in our application. A possible way to represent that constraint in SHACL would be the following node shape:
+
+[code,yaml]
+....
+@prefix ex: <http://example.org/colors#> .
+
+ex:ColorShape a sh:NodeShape ;
+    sh:targetObjectsOf ex:hasColor ;
+    sh:in (
+	    ex:Red
+	    ex:Blue
+	    ex:Green
+    ) .
+....
+
+This example is boring, but it sets the baseline for how one could go about simple enumerations in SHACL.
+
+=== Using terms from controlled vocabularies
+
+In the previous example, we kept things simple and everything, including the permissible values, was defined in the same namespace as identified by the prefix `ex`. Let's demonstrate some of the promised flexibility:
+
+[code,yaml]
+....
+ex:ColorShape a sh:NodeShape ;
+    sh:targetObjectsOf ex:hasColor ;
+    sh:in (
+	    colors:Red
+	    colors:Blue
+	    colors:Green
+    ) .
+....
+
+In this example, we make use of the (fictitious) controlled vocabulary *Colors* provided by the government. This way we can rely on authoratitive reference data and not have to worry about maintaining these values ourselves.
+
+Even better, you can mix and match from several ontologies, including local terms:
+
+[code,yaml]
+....
+ex:ColorShape a sh:NodeShape ;
+    sh:targetObjectsOf ex:hasColor ;
+    sh:in (
+	    colors:Red
+	    colors:Blue
+	    colors:Green
+	    wikidata:Q180778
+	    ex:AntiRed
+    ) .
+....
+
+=== Reusing enumerations
+
+Sometimes, having to manually enumerate many values again and again can become tedious and error-prone. In such cases it can be nice to be able to reuse enumeration node shapes.
+
+For simplicity's sake, let's assume the controlled vocabularies contain one SHACL node shape that enumerates all terms. For example, the *Colors* vocabulary provides the following node shape:
+
+[code,yaml]
+....
+colors:allValues a sh:NodeShape ;
+    sh:in (
+        colors:Red
+        colors:Blue
+        colors:Green
+    ) .
+....
+
+Then, in my own SHACL graph I can use that constraint as follows:
+
+[code,yaml]
+....
+ex:ColorShape a sh:NodeShape ;
+    sh:targetObjectsOf ex:hasColor ;
+    sh:node colors:allValues .
+....
+
+(Note that I need to import the shapes graph containing the node shape first, but for brevity and simplicity's sake this has ben omitted from the example.)
+
+However, now we seem to have lost the ability to mix and match terms from different ontologies. Don't fret, this can still be achieved quite easily:
+
+[code,yaml]
+....
+ex:ColorShape a sh:NodeShape ;
+    sh:targetObjectsOf ex:hasColor ;
+    sh:xone (
+        [ sh:node colors:allValues ]
+        [ sh:in (
+	        ex:AntiRed
+          ) 
+        ]
+    ) .
+....
+
+Using `sh:xone`, exactly one of the listed enumeration node shapes in it must validate the focus node. Note that you can add more node shapes, even ones that are different from enumeration shapes if you so wish. This is the power of RDF: you can reference anything, and because of the flexible graph structure it becomes easy to compose things very powerfully.
+
+== Applying this guidance to real world issues
+
+Within Team Semantiek we currently face a few variants of this issue. Let's see if we can tackle them.
+
+=== Publisher
+
+Each dataset must provide its publisher in its metadata. However, we want to constrain the permissible values to recognized system operators as dictated by NBNL. Moreover, since this constraint is shared across multiple different data products and profiles, we want to make use of reusable node shapes as demonstrated earlier.
+
+For starters, we need a controlled terms to reference. This could either be a set of loose terms or an entire vocabulary.
+
+Again, let's assume the maintainers of the controlled vocabulary include a SHACL node shape enumerating all terms:
+
+[code,yaml]
+....
+system-operator:SystemOperators a sh:NodeShape ;
+	sh:in (
+		system-operator:Liander
+		system-operator:Enexis
+		# etc.
+    ) .
+....
+
+Then, to make use of it, all the profile needs to do is state:
+
+[code,yaml]
+....
+ex:PublisherShape a sh:NodeShape ;
+    sh:targetObjectsOf dcterms:publisher ;
+    sh:node system-operator:SystemOperators .
+....
+
+Or, as before, if we want to allow some additional organizations including local values for this particular case, we could write something like this:
+
+[code,yaml]
+....
+ex:PublisherShape a sh:NodeShape ;
+    sh:targetObjectsOf dcterms:publisher ;
+    sh:xone (
+        [ sh:node system-operator:SystemOperators ]
+        [ sh:in ( ex:nbnl ex:edsn ) ]
+    ) .
+....
+
+==== Reusing the targeting
+
+One may be tempted to think: but now I still need to create a node shape that basically only wraps the `system-operator:SystemOperators` node shape. Isn't there a way I can simply import the node shape and be done with it?
+
+Yes, there are ways to achieve this. Let's modify the node shape in the system operator controlled vocabulary such that it targets the publisher property:
+
+(Note: in practice you would create an extra node shape and never encode the targetting in the controlled vocabulary like this, since it could never make such as assumption of course. But for the sake of simplicity we will do it here.)
+
+[code,yaml]
+....
+system-operator:SystemOperators a sh:NodeShape ;
+	sh:targetObjectsOf dcterms:publisher ;
+	sh:in (
+		system-operator:Liander
+		system-operator:Enexis
+		# etc.
+    ) .
+....
+
+Now, when this node shape is imported, it will automatically target all objects of `dcterms:publisher` and therefore you do not need to write any additional code.
+
+I strongly advise against this, however, since this immediately becomes extremely rigid and hard to change. Also, it is less explicit and harder to maintain. Not to mention that it could be hard to find a reasonable place to store a node shape like this centrally.

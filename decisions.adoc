@@ -1,0 +1,29 @@
+= Decisions
+
+== Versioning
+
+An *evolution strategy* of versioning will be used, meaning:
+
+* new terms can be added freely
+* old terms are never deleted, only deprecated and optionally superseded
+* existing terms can be modified, i.e. definitions, notes, labels, etc. can be
+modified at any time, as long as the changes do not break meaning
+** breaking changes should result in the deprecation of the existing term, and
+the creation of a new one which supersedes it
+
+Using this strategy, there is no reason to use a (semantic) versioning number scheme,
+and version information is recorded only through the unique commit ref from the VCS.
+
+=== How to use
+
+
+==== SHACL
+
+1. *Use the authoritative node shape*. This way you the maintenance of the terms is
+entirely delegated to the authority. Application developers should beware, however,
+that the shape might evolve to contain new terms that were not accounted for when
+building.
+2. *Create your own node shape*. This way you remain in full control of the enumerated
+values. The list will not evolve unless you change it, and will follow the lifecycle
+of your application or data model. This pattern also allows you to create a use-case
+specific subset of the enumeration which might make more sense.

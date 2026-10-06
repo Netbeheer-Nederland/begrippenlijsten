@@ -1,107 +1,204 @@
+"""Builds vocabularies."""
+
 import os
 import os.path
+from pathlib import Path
 import json
 import textwrap
 import shutil
 import jinja2
-from pyoxigraph import *
+from pyoxigraph import Store, parse, RdfFormat, QueryResultsFormat
 
-NAL_FILES_DIR = "src"
-ANTORA_COMPONENT_DIR = "_docs-adoc"
+SRC_DIR = Path("src")
+BUILD_DIR = Path("build")
+DOCS_DIR = Path("docs")
 
-def get_template(vocabType, assetFormat):
-    tmpl_file = {
-        "NBNL Name Authority List": f"name-authority-list.{assetFormat}.jinja2",
-        "NBNL Code List": f"code-list.{assetFormat}.jinja2",
-    }[vocabType]
-    tmpl = jinja2.Environment(loader=jinja2.FileSystemLoader(".")).get_template(tmpl_file)
+ANTORA_COMPONENT_DIR = BUILD_DIR / "docs"
+ANTORA_ROOT_MODULE_DIR = ANTORA_COMPONENT_DIR / "modules" / "ROOT"
 
-    return tmpl
 
-# Create Antora component
-shutil.rmtree(ANTORA_COMPONENT_DIR)
-os.makedirs(ANTORA_COMPONENT_DIR)
+def generate_skos_ontology(scheme, terms, src_file, dst=None):
+    if not dst:
+        dst = BUILD_DIR / Path(scheme["notation"]["value"]).with_suffix(".skos.ttl")
+    shutil.copy(src_file, dst)
 
-attachments_dir = os.path.join(ANTORA_COMPONENT_DIR, "modules", "ROOT", "attachments")
-pages_dir = os.path.join(ANTORA_COMPONENT_DIR, "modules", "ROOT", "pages")
-os.makedirs(pages_dir, exist_ok=True)
-os.makedirs(attachments_dir, exist_ok=True)
+    # NOTE: Currently the source file is not processed, i.e. equal to the
+    # built file.
+    # TODO: Add version metadata which has the Git ref as value.
 
-## Copy index page
-shutil.copyfile(os.path.join(NAL_FILES_DIR, "index.adoc"), os.path.join(pages_dir, "index.adoc"))
+    return dst
 
-## Create nav
-with open(os.path.join(ANTORA_COMPONENT_DIR, "modules", "ROOT", "nav.adoc"), "wt") as f:
-    f.write('')
 
-## Write component descriptor file
-with open(os.path.join(ANTORA_COMPONENT_DIR, "antora.yml"), "wt") as f:
-    f.write(textwrap.dedent(f'''
-        name: ROOT
-        title: NBNL Begrippenlijsten
-        version: ~
-        nav:
-        - modules/ROOT/nav.adoc
-    ''').strip())
+def generate_shacl_ontology(scheme, terms, src_file, dst=None):
+    if not dst:
+        dst = BUILD_DIR / Path(scheme["notation"]["value"]).with_suffix(".shacl.ttl")
 
-for nal_file in os.listdir(NAL_FILES_DIR):
-    if nal_file == "index.adoc":
-        continue
+    shacl_template = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(".")
+    ).get_template("scheme.shacl.ttl.jinja2")
+    shacl = shacl_template.render(scheme=scheme, terms=terms)
 
-    nal_file_path = os.path.join(NAL_FILES_DIR, nal_file)
-    # Read and query
-    nal = Store()
-    for triple in parse(path=nal_file_path, format=RdfFormat.TURTLE):
-        nal.add(triple)
+    with dst.open("wt") as f:
+        f.write(shacl)
+
+    return dst
+
+
+def generate_antora_page(scheme, terms, src_file, dst=None):
+    if not dst:
+        dst = (BUILD_DIR / scheme["notation"]["value"]).with_suffix(".adoc")
+
+    adoc_template = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(".")
+    ).get_template("scheme.adoc.jinja2")
+
+    adoc = adoc_template.render(scheme=scheme, terms=terms)
+
+    with dst.open("wt") as f:
+        f.write(adoc)
+
+    return dst
+
+
+def open_vocabulary(src_file):
+    # NOTE: For now only Turtle is supported.
+    vocab = Store()
+
+    for st in parse(path=src_file, format=RdfFormat.TURTLE):
+        vocab.add(st)
+
+    return vocab
+
+
+def read_vocabulary(src_file):
+    vocab = open_vocabulary(src_file)
 
     # Parse query and serialize to dictionary
-    scheme = json.loads(nal.query('''
+    scheme = json.loads(
+        vocab.query(
+            """
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         PREFIX dcterms: <http://purl.org/dc/terms/>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         SELECT *
         WHERE {
-            ?id a skos:ConceptScheme ;
-                foaf:primaryTopic ?subject ;
-                dcterms:type ?vocabType ;
-                skos:notation ?name ;
+            ?uri a skos:ConceptScheme ;
+                dcterms:subject ?subject ;
+                dcterms:type ?type ;
+                skos:notation ?notation ;
                 dcterms:title ?title .
         }
-    ''').serialize(format=QueryResultsFormat.JSON))["results"]["bindings"][0]
+    """
+        ).serialize(format=QueryResultsFormat.JSON)
+    )["results"]["bindings"][0]
 
-    terms = sorted(json.loads(nal.query('''
+    terms = sorted(
+        json.loads(
+            vocab.query(
+                """
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        PREFIX dcterms: <http://purl.org/dc/terms/>
         PREFIX adms: <http://www.w3.org/ns/adms#>
         SELECT *
         WHERE {
-            ?id a skos:Concept ;
+            ?uri a skos:Concept ;
                 skos:prefLabel ?prefLabel ;
-                foaf:homepage ?homepage ;
                 adms:status ?status ;
-                skos:notation ?code .
+                skos:notation ?notation .
         }
-     ''').serialize(format=QueryResultsFormat.JSON))["results"]["bindings"], key=lambda t: t["id"]["value"])
+    """
+            ).serialize(format=QueryResultsFormat.JSON)
+        )["results"]["bindings"],
+        key=lambda t: t["uri"]["value"],
+    )
 
-    # Generate documentation
-    adoc_template = get_template(scheme["vocabType"]["value"], "adoc")
-    adoc = adoc_template.render(scheme=scheme, terms=terms)
+    return scheme, terms
 
-    with open(os.path.join(pages_dir, scheme["name"]["value"] + ".adoc"), "wt") as f:
-        f.write(adoc)
 
-    # Generate SHACL
-    shacl_template = get_template(scheme["vocabType"]["value"], "shacl.ttl")
-    shacl = shacl_template.render(scheme=scheme, terms=terms)
+def expand_nav(scheme_name):
+    with (ANTORA_ROOT_MODULE_DIR / "nav.adoc").open("a") as f:
+        f.write(f"* xref::{scheme_name}.adoc[]\n")
 
-    with open(os.path.join(attachments_dir, scheme["name"]["value"] + ".shacl.ttl"), "wt") as f:
-        f.write(shacl)
 
-    # Copy SKOS file
-    shutil.copy(nal_file_path, os.path.join(ANTORA_COMPONENT_DIR, "modules", "ROOT", "attachments"))
+def prepare_build_dir():
+    if BUILD_DIR.exists():
+        shutil.rmtree(BUILD_DIR)
+    BUILD_DIR.mkdir(parents=True)
 
-    # Expand nav
-    with open(os.path.join(ANTORA_COMPONENT_DIR, "modules", "ROOT", "nav.adoc"), "a") as f:
-        f.write(f'* xref::{scheme["name"]["value"]}.adoc[]\n')
+
+def create_antora_component():
+    os.makedirs(ANTORA_COMPONENT_DIR)
+    os.makedirs(ANTORA_ROOT_MODULE_DIR / "pages")
+    os.makedirs(ANTORA_ROOT_MODULE_DIR / "attachments")
+
+    # Write Antora component version descriptor.
+    with (ANTORA_COMPONENT_DIR / "antora.yml").open("wt") as f:
+        f.write(
+            textwrap.dedent(
+                """
+            name: ROOT
+            title: NBNL Begrippenlijsten
+            version: ~
+            nav:
+            - modules/ROOT/nav.adoc
+        """
+            ).lstrip()
+        )
+
+    # Create ROOT nav
+    with (ANTORA_ROOT_MODULE_DIR / "nav.adoc").open("wt") as f:
+        f.write("")
+
+    # Copy index page
+    shutil.copy("index.adoc", ANTORA_ROOT_MODULE_DIR / "pages")
+
+
+def relocate_skos_schemes():
+    for skos_file in (ANTORA_ROOT_MODULE_DIR / "attachments").glob("*.skos.ttl"):
+        shutil.copy(skos_file, DOCS_DIR)
+
+
+def relocate_shacl_shapes():
+    for shacl_file in (ANTORA_ROOT_MODULE_DIR / "attachments").glob("*.shacl.ttl"):
+        shutil.copy(shacl_file, DOCS_DIR)
+
+
+def run_antora():
+    os.system("npx antora antora-playbook.local.yml")
+
+
+def build():
+    prepare_build_dir()
+    create_antora_component()
+
+    for src_file in {f for f in SRC_DIR.iterdir() if f.name.endswith(".ttl")}:
+        scheme, terms = read_vocabulary(src_file)
+        scheme_name = scheme["notation"]["value"]
+
+        generate_skos_ontology(
+            scheme,
+            terms,
+            src_file,
+            ANTORA_ROOT_MODULE_DIR / "attachments" / f"{scheme_name}.skos.ttl",
+        )
+        generate_shacl_ontology(
+            scheme,
+            terms,
+            src_file,
+            ANTORA_ROOT_MODULE_DIR / "attachments" / f"{scheme_name}.shacl.ttl",
+        )
+        generate_antora_page(
+            scheme,
+            terms,
+            src_file,
+            ANTORA_ROOT_MODULE_DIR / "pages" / f"{scheme_name}.adoc",
+        )
+
+        expand_nav(scheme_name)
+
+    run_antora()
+    relocate_skos_schemes()
+    relocate_shacl_shapes()
+    (DOCS_DIR / ".nojekyll").touch()  # Disables GitHub's default Jekyll CI/CD pipeline.
+
+
+if __name__ == "__main__":
+    build()

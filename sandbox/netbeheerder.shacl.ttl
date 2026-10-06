@@ -1,0 +1,22 @@
+@prefix : <> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+: a owl:Ontology .
+    # owl:versionInfo "1.0" .
+
+<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#netbeheerderShape> a sh:NodeShape ;
+    skos:scopeNote "Users who wish to restrict properties to exclusively allow values from this code list can import this ontology and use this node shape." ;
+    sh:in (
+        <https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#coteq>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#edsn>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#enexis>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#essent>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#gasunie>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#liander>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#nuon>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#rendo>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#stedin>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#tennet>
+	<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#westland>
+	) .

@@ -1,0 +1,139 @@
+'@context':
+  linkml: https://w3id.org/linkml/
+  cbs: https://www.cbs.nl/nl-nl/onze-diensten/methoden/begrippen/
+  cim: https://cim.ucaiug.io/ns#
+  dcat: http://www.w3.org/ns/dcat#
+  eu: https://cim.ucaiug.io/ns/eu#
+  nbnl: https://begrippen.netbeheernederland.nl/energiesysteembeheer/nl/page/
+  nl: https://cim.ucaiug.io/ns/nl#
+  skos: http://www.w3.org/2004/02/skos/core#
+  xsd: http://www.w3.org/2001/XMLSchema#
+  github: https://github.com/
+  dcterms: http://purl.org/dc/terms/
+  nbnl-publisher: https://modellen.netbeheernederland.nl/begrippenlijsten/publisher#
+'@id': urn:uuid:2808ccf7-c19c-4b96-aa65-7e21c2425458
+'@type': dcat:Dataset
+'dcterms:title': 'Low Voltage (LV) JSON-LD instance data'
+'dcterms:issued':
+  '@value': 2025-12-05T12:34:56Z
+  '@type': xsd:dateTime
+'dcterms:publisher':
+  '@id': nbnl-publisher:liander
+  'dcterms:title': 'Liander N.V.'
+'dcterms:references':
+  - '@id': urn:uuid:5bdf9a6d-ef38-4c4d-a6ee-42a9accdec64
+  - '@id': urn:uuid:4562ba86-b5e0-470b-8e36-dae55428d77f
+'@graph':
+  # --- Substation
+  - '@id': urn:uuid:4b1ce74e-2909-4311-9d12-bc6c12c45006
+    '@type': cim:Substation
+    cim:Substation.Region:
+      '@id': urn:uuid:4f74c8e2-adb5-4815-9607-eb00fb6a0d55
+    cim:IdentifiedObject.mRID: 4b1ce74e-2909-4311-9d12-bc6c12c45006
+    cim:IdentifiedObject.name: Netstation Fictief
+  # --- VoltageLevel (400 V)
+  - '@id': urn:uuid:88ed5755-73fd-41e2-ad4b-037dfa274762
+    '@type': cim:VoltageLevel
+    cim:VoltageLevel.BaseVoltage:
+      '@id': urn:uuid:b7482b2f-bcb8-46e9-99b1-e0cd09f3c205
+    cim:VoltageLevel.Substation:
+      '@id': urn:uuid:4b1ce74e-2909-4311-9d12-bc6c12c45006
+    cim:IdentifiedObject.mRID: 88ed5755-73fd-41e2-ad4b-037dfa274762
+  - '@id': urn:uuid:9f13c2d6-9128-4a97-b824-0e4d4cea638f
+    '@type': cim:ConnectivityNode
+    cim:ConnectivityNode.ConnectivityNodeContainer:
+      '@id': urn:uuid:88ed5755-73fd-41e2-ad4b-037dfa274762
+    cim:IdentifiedObject.mRID: 9f13c2d6-9128-4a97-b824-0e4d4cea638f
+  # --- PowerTransformer
+  - '@id': urn:uuid:91bcb52e-eae4-42f0-9d31-2eb51511f3f8
+    '@type': cim:PowerTransformer
+    cim:Equipment.EquipmentContainer:
+      '@id': urn:uuid:4b1ce74e-2909-4311-9d12-bc6c12c45006
+    cim:IdentifiedObject.mRID: 91bcb52e-eae4-42f0-9d31-2eb51511f3f8
+  # --- PowerTransformerEnd (400 V)
+  - '@id': urn:uuid:f0e1f8a2-65b6-4c67-8cc9-bba95247719d
+    '@type': cim:Terminal
+    cim:Terminal.ConnectivityNode:
+      '@id': urn:uuid:9f13c2d6-9128-4a97-b824-0e4d4cea638f
+    cim:Terminal.ConductingEquipment:
+      '@id': urn:uuid:91bcb52e-eae4-42f0-9d31-2eb51511f3f8
+    cim:IdentifiedObject.mRID: f0e1f8a2-65b6-4c67-8cc9-bba95247719d#
+  - '@id': urn:uuid:8f2b4255-ae8c-41f2-8f0b-02b612339db9
+    '@type': cim:PowerTransformerEnd
+    cim:PowerTransformerEnd.PowerTransformer:
+      '@id': urn:uuid:91bcb52e-eae4-42f0-9d31-2eb51511f3f8
+    cim:TransformerEnd.endNumber: 2
+    cim:TransformerEnd.Terminal:
+      '@id': urn:uuid:f0e1f8a2-65b6-4c67-8cc9-bba95247719d
+    cim:IdentifiedObject.mRID: 8f2b4255-ae8c-41f2-8f0b-02b612339db9
+  # --- ActivePowerLimit
+  - '@id': urn:uuid:d3469ad5-10db-4fe3-98e7-e5a392dd7e61
+    '@type': cim:ActivePowerLimit
+    cim:ActivePowerLimit.value:
+      '@id': urn:uuid:3001c82b-b6a7-48e4-8244-0508f2aaa59e
+    cim:OperationalLimit.OperationalLimitSet:
+      '@id': urn:uuid:260afea3-011c-46f3-8c49-1f4b8c6d5c58
+    cim:IdentifiedObject.description: 'Aanwezige transportcapaciteit'
+    cim:IdentifiedObject.mRID: d3469ad5-10db-4fe3-98e7-e5a392dd7e61
+  - '@id': urn:uuid:3001c82b-b6a7-48e4-8244-0508f2aaa59e
+    '@type': cim:ActivePower
+    cim:ActivePower.multiplier:
+      '@id': cim:UnitMultiplier.k
+    cim:ActivePower.unit:
+      '@id': cim:UnitSymbol.W
+    cim:ActivePower.value:
+      '@value': 630.0
+      '@type': xsd:float
+  - '@id': urn:uuid:260afea3-011c-46f3-8c49-1f4b8c6d5c58
+    '@type': cim:OperationalLimitSet
+    cim:OperationalLimitSet.Equipment:
+      '@id': urn:uuid:91bcb52e-eae4-42f0-9d31-2eb51511f3f8
+    cim:OperationalLimitSet.Terminal:
+      '@id': urn:uuid:f0e1f8a2-65b6-4c67-8cc9-bba95247719d
+    cim:IdentifiedObject.mRID: 260afea3-011c-46f3-8c49-1f4b8c6d5c58
+  # --- EnergyConsumer
+  - '@id': urn:uuid:abae232f-ae19-4e69-a2c7-84c4a86b78f3
+    '@type': cim:EnergyConsumer
+    cim:IdentifiedObject.mRID: abae232f-ae19-4e69-a2c7-84c4a86b78f3
+  - '@id': urn:uuid:9cb3631f-86b6-47b7-992c-3109829a818a
+    '@type': cim:Terminal
+    cim:Terminal.ConductingEquipment:
+      '@id': urn:uuid:abae232f-ae19-4e69-a2c7-84c4a86b78f3
+    cim:IdentifiedObject.mRID: 9cb3631f-86b6-47b7-992c-3109829a818a
+  # --- UsagePoint
+  - '@id': urn:uuid:882d940a-f86d-471d-a00f-a9dad507da60
+    '@type': cim:UsagePoint
+    cim:UsagePoint.isVirtual: true
+    cim:UsagePoint.Equipments:
+      - '@id': urn:uuid:abae232f-ae19-4e69-a2c7-84c4a86b78f3
+    cim:IdentifiedObject.mRID: 882d940a-f86d-471d-a00f-a9dad507da60
+    nl:IdentifiedObject.europeanArticleNumberEAN: '800056789101112131'
+
+  # --- NBNL Object Register --------------------------------------------------
+
+  - '@id': urn:uuid:3061d9bc-a20e-4b72-85b7-042c731f86be
+    '@type': cim:GeographicalRegion
+    cim:IdentifiedObject.mRID: 3061d9bc-a20e-4b72-85b7-042c731f86be
+    cim:IdentifiedObject.name: 'NL'
+  - '@id': urn:uuid:4f74c8e2-adb5-4815-9607-eb00fb6a0d55
+    '@type': cim:SubGeographicalRegion
+    cim:SubGeographicalRegion.Region:
+      '@id': urn:uuid:3061d9bc-a20e-4b72-85b7-042c731f86be
+    cim:IdentifiedObject.mRID: 4f74c8e2-adb5-4815-9607-eb00fb6a0d55
+    cim:IdentifiedObject.name: 'Liander'
+  - '@id': urn:uuid:b7482b2f-bcb8-46e9-99b1-e0cd09f3c205
+    '@type': cim:BaseVoltage
+    cim:BaseVoltage.nominalVoltage:
+      '@id': urn:uuid:1de33b4b-052e-45cb-acac-8e887fb8af18
+    cim:IdentifiedObject.description: 'Base voltage defined by ENTSO-E 0.4 kV'
+    cim:IdentifiedObject.mRID: b7482b2f-bcb8-46e9-99b1-e0cd09f3c205
+    cim:IdentifiedObject.name: 'AC-0-4'
+  - '@id': urn:uuid:1de33b4b-052e-45cb-acac-8e887fb8af18
+    '@type': cim:Voltage
+    cim:Voltage.multiplier:
+      '@id': cim:UnitMultiplier.k
+    cim:Voltage.unit:
+      '@id': cim:UnitSymbol.V
+    cim:Voltage.value:
+      '@value': 0.4
+      '@type': xsd:float

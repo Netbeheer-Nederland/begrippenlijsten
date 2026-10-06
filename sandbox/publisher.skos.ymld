@@ -1,0 +1,97 @@
+"@context":
+  skos: http://www.w3.org/2004/02/skos/core#
+  rdfs: http://www.w3.org/2000/01/rdf-schema#
+  foaf: http://xmlns.com/foaf/0.1/
+  adms: http://www.w3.org/ns/adms#
+  nbnl-term: https://begrippen.netbeheernederland.nl/id/
+  nbnl-assetType: https://modellen.netbeheernederland.nl/begrippenlijsten/assetType#
+  dcterms: http://purl.org/dc/terms/
+  status: https://inspire.ec.europa.eu/registry/status/
+  owl: http://www.w3.org/2002/07/owl
+  "@vocab": http://www.w3.org/2004/02/skos/core#
+  "@base": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#
+  primaryTopic:
+    "@id": foaf:primaryTopic
+    "@type": "@id"
+  type:
+    "@id": dcterms:type
+    "@type": "@id"
+  title:
+    "@id": dcterms:title
+    "@container": "@language"
+  identifier: dcterms:identifier
+  prefLabel: skos:prefLabel
+  homepage:
+    "@id": foaf:homepage
+    "@type": xsd:anyURI
+  status:
+    "@id": adms:status
+    "@type": "@id"
+  concepts:
+    "@reverse": skos:inScheme
+    "@container": "@index"
+    "@index": dcterms:identifier
+    "@context":
+      "@vocab": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#
+"@id": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#
+"@type": [skos:ConceptScheme, owl:Ontology]
+primaryTopic: dcterms:publisher
+type: nbnl-assetType:NameAuthorityList
+title:
+  nl: Uitgever
+  en: Publisher
+concepts:
+  coteq:
+    "@id": coteq
+    prefLabel: Coteq Netbeheer B.V.
+    homepage: https://www.coteqnetbeheer.nl
+    status: status:valid
+  edsn:
+    "@id": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#edsn
+    prefLabel: Energie Data Services Nederland
+    homepage: https://www.edsn.nl
+    status: status:valid
+  enexis:
+    "@id": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#enexis
+    prefLabel: Enexis Netbeheer B.V.
+    homepage: https://www.enexis.nl
+    status: status:valid
+  gasunie:
+    "@id": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#gasunie
+    homepage: https://www.gasunie.nl
+    status: status:valid
+  liander:
+    "@id": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#liander
+    prefLabel: Liander N.V.
+    homepage: https://www.liander.nl
+    status: status:valid
+  rendo:
+    "@id": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#rendo
+    prefLabel: N.V. RENDO
+    homepage: https://www.rendonetwerken.nl
+    status: status:valid
+  stedin:
+    "@id": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#stedin
+    prefLabel: Stedin Netbeheer B.V.
+    homepage: https://www.stedin.net
+    status: status:valid
+  tennet:
+    "@id": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#tennet
+    prefLabel: TenneT TSO B.V.
+    homepage: https://www.tennet.eu
+    status: status:valid
+  westland:
+    "@id": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#westland
+    prefLabel: Westland Infra Netbeheer B.V.
+    homepage: https://westlandinfra.nl
+    status: status:valid
+  nuon:
+    "@id": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#nuon
+    prefLabel: NUON
+    homepage: https://nuon.nl
+    status: status:inval ;
+  essent:
+    "@id": https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#essent
+    prefLabel: ESSENT
+    homepage: https://essent.nl
+    status: status:invalid

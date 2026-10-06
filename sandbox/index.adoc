@@ -1,0 +1,238 @@
+// SPDX-FileCopyrightText: Contributors to the PROF-AP-CIM project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+= PROF-AP-CIM
+:sectnums:
+// :page-spectype: Application Profile
+:page-spectype: Standard
+
+PROF-AP-CIM is a standard which specifies how to create CIM profiles.
+
+// include::partial$header.adoc[]
+
+== Introduction
+****
+Making use of the CIM to model data for a given application comes with great benefits, such as shared vocabulary and re-use of domain knowledge and modeling expertise -- for both humans and machines. However, applications have more specific constraints and may require additional vocabulary. Furthermore, correctly and usefully making use of the CIM for a given application is not trivial, and guidance may be needed. A specification that describes such constraints and extensions, and which provides guidance about how to apply standards (the CIM in our case) is called an _(application) profile_. For our convenience, profiles of the CIM will be referred to as _CIM profiles_.
+
+In this specification a description will be provided of what CIM profiles are, what their logical structure is and the information contained in them, how to represent them -- both for humans and machines, how to create them and how to validate their correctness.
+****
+
+// #TODO#: Image of act of profiling: subsetting and constraining.
+
+== Conformance
+Information is normative unless represented in a diagram, example or attached artifact, or explicitly specified otherwise.
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
+
+== Goals and scope
+
+* Standardization of CIM profiles
+* Use of and compliance with PROF
+* FAIR descriptions and Linked Data
+
+=== Out of scope
+
+* Serialization
+* Instance data
+* Profile categorization
+* Tooling for creating profiles
+
+== Definition
+A <<dfn-cim-profile,CIM profile>> is a <<dfn-data-profile,data profile>> of the CIM.
+
+.CIM profile
+image::image-2026-07-13-14-28-32-273.png[]
+
+.PROF-AP-CIM
+image::image-2026-07-13-15-54-20-124.png[]
+
+
+Implied in this definition is that CIM profiles are standards^DCTERMS^ (or, synonymously, specifications). Consequently, profiles can be profiled.
+
+****
+.Profiling of profiles at Netbeheer Nederland.
+====
+At Netbeheer Nederland, a CIM profile group has been created to provide a standardized way of using the CIM to model data for given applications. Several specific use cases have arisen, each of which has created a data model by conforming to the profile group. The resulting data model, however, can be regarded a profile in its own right, since it is a data specification which provides constraints, extensions and guidance on how to apply a standard.
+====
+****
+
+A CIM profile _MUST_ conform to the PROF-AP-CIM specification in order to be regarded valid.
+
+//which conforms to the PROF-AP-CIM specification.
+
+// #NOTE#: Being a shapes graph adds no semantic information to the definition, this is merely a representational necessity for SHACL to be able to express its vocabulary.
+
+NOTE: Being a profile of the CIM does not exclude being a profile of other specifications as well.
+
+PROF-AP-CIM is an application profile of PROF, and specifies how the CIM ought to be used when modeling data for given applications.
+
+****
+More verbosely, this means a CIM profile is a specification that constrains, extends, combines or provide guidance for or explanation about the usage of the canonical CIM and other data specifications to define the content and structure of data used in a given context.
+****
+
+=== Resources
+
+PROF-AP-CIM provides resources to help with the creation, validation and use of CIM profiles:
+
+SHACL:: enforces the desired structure of a CIM profile when serialized as RDF
+JSON Schema:: helps with authoring profiles in JSON/YAML (including LD) and allows validating
+non-RDF JSON/YAML
+OWL:: definition of additional PROF-AP-CIM vocabulary not part of PROF or SHACL
+JSON-LD context:: syntactic transformations allowing for the mapping between non-LD and LD JSON/YAML and more
+comfortable writing of JSON/YAML that is JSON-LD
+
+== Vocabulary
+
+[#shapesGraph]
+=== Class: sh:ShapesGraph
+[horizontal]
+URI:: http://www.w3.org/ns/shacl#ShapesGraph[`sh:ShapesGraph`]
+Is defined by:: https://www.w3.org/TR/shacl12-core/[SHACL 1.2 Core]
+Subclass of:: `owl:Ontology`
+
+A shapes graph is an RDF graph containing zero or more shapes that is passed into a SHACL validation process so
+that a data graph can be validated against the shapes.
+
+#TODO#: Are the membership properties required, i.e. will these be checked for in the SHACL?
+Or are these mere authoring supporting tools, in which case perhaps these should be part of <<_authoring>>?
+Furthermore: these do actually encode roles played by shapes, whereas the `@reverse` does not. This pain is felt
+when we want to infer types depending on whether something is a class or enum, but other than that, the information
+itself is already new regarldess of authoring.
+
+[#hasMember]
+=== Property: cimprof:hasMember
+[horizontal]
+URI:: https://cim.ucaiug.org/prof-ap-cim#hasMember[`cimprof:hasMember`]
+Domain:: `rdfs:Resource`
+Range:: `rdfs:Resource`
+Inverse of:: `rdfs:member`
+
+Indicates membership of a resource by a resource.
+
+[#hasClassShape]
+=== Property: cimprof:hasClassShape
+[horizontal]
+URI:: https://cim.ucaiug.org/prof-ap-cim#hasClassShape[`cimprof:hasClassShape`]
+Domain:: `sh:ShapesGraph`
+Range:: `sh:NodeShape, rdfs:Class`
+Subproperty of:: `cimprof:hasMember`
+
+Node shapes in the shapes graph which represent classes.
+
+NOTE: This leverages SHACL's implicit class targeting mechanism.
+
+[#hasEnumerationShape]
+=== Property: cimprof:hasEnumerationShape
+[horizontal]
+URI:: https://cim.ucaiug.org/prof-ap-cim#hasEnumerationShape[`cimprof:hasEnumerationShape`]
+Domain:: `sh:ShapesGraph`
+Range:: `sh:NodeShape`
+Subproperty of:: `cimprof:hasMember`
+
+Node shapes in the shapes graph which represent enumerations.
+
+== Schema
+
+Each CIM profile MUST have the shape described by the PROF-AP-CIM schema. When representing it in RDF, the SHACL schema
+can be used to validate it. For representations in YAML or JSON which are not utilizing JSON-LD, the JSON Schema can be
+used.
+
+#TODO#:
+
+SHACL should require:
+* OWL import of PROF-AP-CIM OWL metamodel.
+* correct type values for graph
+* optional inclusion of shapes
+
+.Schema
+[d2,svg,theme=1,width=40%]
+----
+include::partial$schema-diagram.d2[]
+----
+
+=== Namespaces
+
+CURIEs are used to refer to terms from other vocabularies, each of whose base IRI is represented by a CURIE prefix:
+
+include::partial$schema-namespaces.adoc[]
+
+include::partial$schema-classes.adoc[]
+
+== Versioning
+
+We borrow the https://www.w3.org/TR/vocab-dcat-3/#version-history[version chain and hierarchy] strategy from DCAT 3,
+which in our case translates to having one _abstract profile_, of which one or more versions exist.
+
+== Authoring profiles in YAML
+
+.Supporting resources to write CIM Profile in RDF/YAML
+image::image-2026-06-29-12-58-13-925.png[]
+
+Using the PROF-AP-CIM JSON-LD context, one can write plain YAML
+
+=== Authoring
+
+
+=== Building
+
+
+
+
+
+
+[nonum]
+== Appendix A: Diagram Layout profile example
+
+Any RDF serialization will do for profile instances, but it is recommended to make use of the xref::attachment$schema/prof_ap_cim.context.jsonld[JSON-LD context,window=read-later]
+and write using YAML.
+
+.Source code (YAML-LD)
+[%collapsible]
+====
+[source,yaml]
+----
+include::attachment$examples/diagram_layout_ap.yml[]
+----
+====
+
+Note how the user does not need to write any URIs or CURIEs by hand. Moreover, all the `@` characters which indicate special JSON-LD syntax have been aliased
+such that the user won't be confused by them.
+
+This YAML can trivially be converted to JSON, rendering a valid JSON-LD serialization of the profile instance:
+
+// .Source code (JSON-LD)
+// [%collapsible]
+// ====
+// [source,json]
+// ----
+// include::attachment$examples/diagram_layout_ap.jsonld[]
+// ----
+// ====
+
+[nonum]
+== Appendix B: Validating profiles
+
+TODO.
+
+[glossary]
+== Terminology
+
+[glossary]
+[[dfn-specification]]specification:: A basis for comparison; a reference point against which other things can be evaluated.^https://www.w3.org/TR/dx-prof/#dfn-specification[PROF]^
+[[dfn-standard]]standard:: Synonym of <<dfn-specification>>.
+[[dfn-data-specification]]data specification::
+A specification, with human- and/or machine-processable representations, that defines the content and structure of data used in a given context.^https://www.w3.org/TR/dx-prof/#dfn-profile[PROF]^
+[[dfn-data-profile]](data) profile:: A data specification that constrains, extends, combines, or provides guidance or explanation about the usage of other data specifications.
++
+This definition includes what are sometimes called "application profiles", "metadata application profiles", or "metadata profiles". In this document, "data profile" and these other variants are all referred to as just "profiles".^https://www.w3.org/TR/dx-prof/#dfn-profile[PROF]^
+[[dfn-cim-profile]]CIM profile:: A <<dfn-data-profile,data profile>> of the CIM.
+[[dfn-profiling]]profiling X:: (verb) The act of creating a <<dfn-data-profile>> which describes how to use specification X.
+
+[bibliography]
+== References
+
+[bibliography]
+* [[[RFC2119]]] S. Bradner. 1997. https://www.rfc-editor.org/rfc/rfc2119[Key words for use in RFCs to Indicate Requirement Levels].
+* [[[PROF]]] RDF Data Shapes Working Group. 20 July 2017. https://www.w3.org/TR/shacl/[Shapes Constraint Language (SHACL)].
+* [[SHACL]]] W3C Data Exchange Working Group (DXWG). 18 December 2019. https://www.w3.org/TR/dx-prof/[The Profiles Vocabulary].

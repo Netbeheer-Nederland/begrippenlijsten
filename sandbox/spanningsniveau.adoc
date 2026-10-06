@@ -10,7 +10,7 @@
 @prefix owl: <http://www.w3.org/2002/07/owl> .
 
 : a skos:ConceptScheme , owl:Ontology ;
-    foaf:primaryTopic <https://begrippen.netbeheernederland.nl/id/w8e9z> ;
+    dcterms:subject <https://begrippen.netbeheernederland.nl/id/w8e9z> ;
     skos:notation "spanningsniveau" ;
     dcterms:type "NBNL Code List" ;
     dcterms:title "Spanningsniveau"@nl .

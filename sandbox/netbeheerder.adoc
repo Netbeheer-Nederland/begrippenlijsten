@@ -1,3 +1,33 @@
+{% set scheme = vocabulary.schemes[0] %}
+{% set terms = vocabulary.concepts %}
+
+= {{ scheme.title }}
+
+Subject:: {{ scheme.subject }}
+Vocabulary type:: {{ scheme.type }}
+Artefacts::
+[no-bullet]
+* xref::attachment${{ scheme.notation }}.skos.ttl[SKOS concept scheme (Turtle),window=read-later]
+* xref::attachment${{ scheme.notation }}.shacl.ttl[SHACL shapes graph (Turtle),window=read-later]
+
+== Terms
+
+|===
+| Label | Notation
+
+{% for term in terms if not term.status == "https://inspire.ec.europa.eu/registry/status/invalid" %}
+| [[{{ term.notation }}]]{{ term.uri }}[*{{ term.prefLabel }}*]
+| `{{ term.notation }}`
+{% endfor %}
+|===
+
+[discrete]
+=== Deprecated
+{% for term in terms if term.status == "https://inspire.ec.europa.eu/registry/status/invalid" %}
+{{ term.uri }}[{{ term.prefLabel }}]{% if not loop.last %}, {% endif %}
+{%- endfor %}
+
+{% skos as vocabulary %}
 @prefix : <https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -9,7 +39,7 @@
 @prefix owl: <http://www.w3.org/2002/07/owl> .
 
 : a skos:ConceptScheme , owl:Ontology ;
-    foaf:primaryTopic <https://begrippen.netbeheernederland.nl/id/x6zcz> ;
+    dcterms:subject <https://begrippen.netbeheernederland.nl/id/x6zcz> ;
     skos:notation "netbeheerder" ;
     dcterms:type "NBNL Name Authority List" ;  # TODO: Should be a URI, preferably from some existing code list from - for example - the EU.
     dcterms:title "Netbeheerder"@nl .
@@ -103,3 +133,4 @@
     skos:notation "ESSENT" ;
     skos:topConceptOf : ;
     skos:inScheme : .
+{% endskos %}

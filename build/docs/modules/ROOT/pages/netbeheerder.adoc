@@ -1,0 +1,52 @@
+= Netbeheerder
+
+Subject:: https://begrippen.netbeheernederland.nl/id/x6zcz
+Vocabulary type:: Name authority list
+Artefacts::
+[no-bullet]
+* xref::attachment$netbeheerder.skos.ttl[SKOS concept scheme (Turtle),window=read-later]
+* xref::attachment$netbeheerder.shacl.ttl[SHACL shapes graph (Turtle),window=read-later]
+* http://localhost:8000/netbeheerder.skos.ttl[SKOS concept scheme (Turtle)]
+* http://localhost:8000/netbeheerder.shacl.ttl[SHACL shapes graph (Turtle)]
+
+
+== Terms
+
+|===
+| Label | Notation
+
+
+| [[COTEQ]]https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#COTEQ[*Coteq Netbeheer B.V.*]
+| `COTEQ`
+
+| [[EDSN]]https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#EDSN[*Energie Data Services Nederland*]
+| `EDSN`
+
+| [[ENEXIS]]https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#ENEXIS[*Enexis Netbeheer B.V.*]
+| `ENEXIS`
+
+| [[GASUNIE]]https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#GASUNIE[*Gasunie Transport Services B.V.*]
+| `GASUNIE`
+
+| [[LIANDER]]https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#LIANDER[*Liander N.V.*]
+| `LIANDER`
+
+| [[RENDO]]https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#RENDO[*N.V. RENDO*]
+| `RENDO`
+
+| [[STEDIN]]https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#STEDIN[*Stedin Netbeheer B.V.*]
+| `STEDIN`
+
+| [[TENNET]]https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#TENNET[*TenneT TSO B.V.*]
+| `TENNET`
+
+| [[WESTLAND]]https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#WESTLAND[*Westland Infra Netbeheer B.V.*]
+| `WESTLAND`
+
+|===
+
+[discrete]
+=== Deprecated
+
+https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#ESSENT[ESSENT], 
+https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder#NUON[NUON]

@@ -5,7 +5,7 @@ content:
   sources:
     - url: ''
       branches: HEAD
-      start_paths: _docs-adoc
+      start_paths: build/docs
 asciidoc:
   attributes:
     page-pagination: ''

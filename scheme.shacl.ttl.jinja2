@@ -1,0 +1,13 @@
+@prefix owl: <http://www.w3.org/2002/07/owl> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<{{ scheme["uri"]["value"] }}.shacl.ttl> a owl:Ontology .
+
+<{{ scheme["uri"]["value"] }}#{{ scheme["notation"]["value"] }}Shape> a sh:NodeShape ;
+    skos:scopeNote "Users who wish to restrict properties to exclusively allow values from this code list can import this ontology and use this node shape." ;
+    sh:in (
+{%- for term in terms %}
+        <{{ term["uri"]["value"] }}>
+{%- endfor %}
+    ) .
