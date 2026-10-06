@@ -4,10 +4,10 @@ Subject:: https://begrippen.netbeheernederland.nl/id/x6zcz
 Vocabulary type:: Name authority list
 Artefacts::
 [no-bullet]
-* xref::attachment$netbeheerder.skos.ttl[SKOS concept scheme (Turtle),window=read-later]
-* xref::attachment$netbeheerder.shacl.ttl[SHACL shapes graph (Turtle),window=read-later]
-* http://localhost:8000/netbeheerder.skos.ttl[SKOS concept scheme (Turtle)]
-* http://localhost:8000/netbeheerder.shacl.ttl[SHACL shapes graph (Turtle)]
+* https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder.skos.ttl[SKOS concept scheme (Turtle,window=read-later)]
+* https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder.shacl.ttl[SHACL shapes graph (Turtle),window=read-later]
+
+
 
 
 == Terms

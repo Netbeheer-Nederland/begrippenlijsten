@@ -1,2 +1,1 @@
 * xref::netbeheerder.adoc[]
-* xref::netbeheerder.adoc[]

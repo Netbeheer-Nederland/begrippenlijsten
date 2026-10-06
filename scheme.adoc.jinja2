@@ -4,10 +4,10 @@ Subject:: {{ scheme["subject"]["value"] }}
 Vocabulary type:: {{ scheme["type"]["value"] }}
 Artefacts::
 [no-bullet]
-* xref::attachment${{ scheme["notation"]["value"] }}.skos.ttl[SKOS concept scheme (Turtle),window=read-later]
-* xref::attachment${{ scheme["notation"]["value"] }}.shacl.ttl[SHACL shapes graph (Turtle),window=read-later]
-* http://localhost:8000/{{ scheme["notation"]["value"] }}.skos.ttl[SKOS concept scheme (Turtle)]
-* http://localhost:8000/{{ scheme["notation"]["value"] }}.shacl.ttl[SHACL shapes graph (Turtle)]
+* https://modellen.netbeheernederland.nl/begrippenlijsten/{{ scheme["notation"]["value"] }}.skos.ttl[SKOS concept scheme (Turtle,window=read-later)]
+* https://modellen.netbeheernederland.nl/begrippenlijsten/{{ scheme["notation"]["value"] }}.shacl.ttl[SHACL shapes graph (Turtle),window=read-later]
+
+{# TODO: These linked URIs should be dynamic and passed to the template ^ #}
 
 
 == Terms

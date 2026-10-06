@@ -8,7 +8,10 @@
 @prefix status: <https://inspire.ec.europa.eu/registry/status/> .
 @prefix owl: <http://www.w3.org/2002/07/owl> .
 
-<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder> a skos:ConceptScheme , owl:Ontology ;
+<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder.skos.ttl> a owl:Ontology .
+
+
+<https://modellen.netbeheernederland.nl/begrippenlijsten/netbeheerder> a skos:ConceptScheme ;
     dcterms:subject <https://begrippen.netbeheernederland.nl/id/x6zcz> ;
     skos:notation "netbeheerder" ;
     dcterms:type "Name authority list" ;  # TODO: Should be a URI, preferably from some existing code list from - for example - the EU.
