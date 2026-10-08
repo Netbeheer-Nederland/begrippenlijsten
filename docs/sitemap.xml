@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>http://localhost:8000/decisions.html</loc>
-<lastmod>2026-10-08T11:19:52.420Z</lastmod>
-</url>
-<url>
 <loc>http://localhost:8000/guide.html</loc>
-<lastmod>2026-10-08T11:19:52.420Z</lastmod>
+<lastmod>2026-10-08T15:06:00.323Z</lastmod>
 </url>
 <url>
 <loc>http://localhost:8000/index.html</loc>
-<lastmod>2026-10-08T11:19:52.420Z</lastmod>
+<lastmod>2026-10-08T15:06:00.323Z</lastmod>
 </url>
 <url>
 <loc>http://localhost:8000/marktpartijen.html</loc>
-<lastmod>2026-10-08T11:19:52.420Z</lastmod>
+<lastmod>2026-10-08T15:06:00.323Z</lastmod>
+</url>
+<url>
+<loc>http://localhost:8000/versioning.html</loc>
+<lastmod>2026-10-08T15:06:00.323Z</lastmod>
 </url>
 </urlset>

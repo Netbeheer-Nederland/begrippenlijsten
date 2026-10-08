@@ -1,15 +1,142 @@
-= Decisions
+= Architecture
 
-== Versioning
+== IRI strategy
 
-An *evolution strategy* of versioning will be used, meaning:
+Each *controlled vocabulary* is identified by its IRI, and so are each of the terms contained in them:
 
-* new terms can be added freely
-* old terms are never deleted, only deprecated and optionally superseded
-* existing terms can be modified, i.e. definitions, notes, labels, etc. can be
-modified at any time, as long as the changes do not break meaning
-** breaking changes should result in the deprecation of the existing term, and
-the creation of a new one which supersedes it
+.IRI templates
+[cols="h,3"]
+|===
+| Controlled vocabulary
+| `\https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}`
+| Controlled vocabulary term
+| `\https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}#{term}`
+|===
 
-Using this strategy, there is no reason to use a (semantic) versioning number scheme,
-and version information is recorded only through the unique commit ref from the VCS.
+.Vocabulary representations
+[cols="h,3"]
+|===
+| Web documentation (HTML)
+|`\https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}.html`
+| SKOS (Turtle)
+| `\https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}.skos.ttl`
+| SHACL (Turtle)
+| `\https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}.shacl.ttl`
+|===
+
+////
+.Vocabulary representations
+--
+SKOS (Turtle):: `https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}.{version}.skos.ttl`
+SHACL (Turtle):: `https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}.{version}.shacl.ttl`
+--
+////
+
+where:
+
+[horizontal]
+`{vocabulary}`:: name of the vocabulary; non-opaque; "kebab-case"
+`{term}`:: name of the term; non-opaque; "UPPERCASE"
+
+Hash IRIs are used because they reflect that terms cannot exist without an authoritative vocabulary in which they are described.footnote:[Containment in an authoritative vocabulary is a rigid property of terms.] Furthermore they allow for a trivial -- and frankly, desirable -- implementation of dereferenceable IRIs, namely by resolving to the web documenation representation of the vocabulary.
+
+Regarding the vocabulary and term names, although we do recognize the maintenance benefits of using opaque names, for the benefit of developers we have opted to go for meaningful names.
+
+== Versioning strategy
+
+No release cycle or version number scheme will be used. Instead, controlled vocabularies will simply evolve. This keeps things simple, predictable and maintenable.footnote:[In particular this avoids complicated scenarios with term deprecation. Assuming you favor stable term IRIs which mention no version number, what should these dereference to if in the latest version the term is deprecated?]
+
+NOTE: Each modification to the vocabulary _does_ result in a different version of it, but none of these representations are exposed through its identifying IRI and are merely accessible through the VCS. Effectively, this encodes having a single evolving identity whilst preserving historical lineage of the evolution.
+
+Furthermore, it deserves mention that terms themselves do not have versions. Different versions of a vocabulary might provide different descriptions of terms contained in it, but that information is part of the vocabulary (in the form of staements), and do not belong to the terms themselves.
+
+=== Evolution rules
+
+The vocabulary evolves according to a set of rules which ensures the vocabulary remains FAIR. But most importantly, identities must be stable, i.e. modifications must not lead to terms or vocabularies obtaining a meaning is no longer compatible with earlier ones.
+
+.Changes
+|===
+| Safe | Breaking
+
+| Adding terms
+| Deleting terms
+
+| Add or remove notes
+| Relocating the term in the taxonomy
+
+| Improving descriptions without changing meaning
+| Change the preferred label
+|===
+
+Breaking changes are strictly prohibited. Instead, deprecate affected term(s), create new terms and have those supersede the old ones.
+
+
+////
+.Why not use a versioning numbering scheme?
+****
+We could have chosen to number the versions of the vocabulary using a standard such
+as SemVer. Why didn't we?
+
+Let's look at the potential benefits SemVer could have brought us:
+
+. You could safely delete terms instead of having to keep them around in a deprecated state.
+. Developers who use the vocabulary could use a specific version so that they're guaranteed
+the referenced vocabulary does not change.
+
+Let's start with (1). Suppose in version 1.0 we there is a term _red_, which gets deleted in
+version 2.0. However, IRIs should never break, so the IRI for the term _red_ should ideally
+still be dereferenceable. Now, either the term IRI contains the vocabulary's version number,
+which is a bad idea. This means each term has an IRI for each vocabulary version, i.e. it
+results in many terms with differnt IRIs but the same meaning. That's far from ideal. Moreover,
+the version number in the IRI might suggest to humans that the term itself is versioned.
+So, let's say the term IRI does not contain a version number. In this case, dereferencing gets
+complicated. If a hash IRI strategy is used, terms always dereference the latest vocabulary
+document, so that doesn't work. If a 303-redirect strategy is used, though, the server should
+be aware from what version each deprecated term was deprecated in order to perform a sensible
+redirect. This leads to very brittle and complicated architecture. So, clearly, removing terms
+is never a good idea, even if you were to use a numbering scheme.
+
+Then, let's address (2). First of all, in the vast majority of cases, developers will developer
+their own data models and enumerations. If at some point in time they took the terms from a
+controlled vocabulary ("copy by value"), evolving the vocabulary does not affect this. The one
+exception is when developers use SHACL and choose to make use of the authoritative SHACL which
+accompanies the vocabulary, i.e. they import and use the node shape that enumerates all the terms.
+In this scenarion, whenever the vocabulary evolves, the SHACL shape might too. Most interestingly,
+say a new term has been added. Automatically, the developer's SHACL will include that term as a
+valid value when validating. Although it's nice from a maintenance point-of-view, can we be sure
+this breaks nothing on the application end? First of all, for this risk to even be relevant, a
+dataset would have to contain this new enumeration value, which oftentimes won't be the case.
+Then, when the RDF data is deemed valid, it could be parsed in some programming language. It is
+very common for data structures to be closed, meaning that if the enumeration contains an unknown
+value, this leads to an error. This, however, is precisely the point where it is the
+responsibility of the developer to ensure the enumeration is parsed only to the extent where it can
+be handled. For example, the parsing logic could filter extraneous values from the RDF prior to
+creating the data structures. Of course, the developer can reconsider and choose to implement their
+own SHACL node shape where only those terms -- using the authoritative IRIs! -- are enumerated that
+are currently expected.
+
+On a final note, RDF and SHACL are typically used in the context of data exchange and integration
+from external sources. This means there's fewer assumptions you can make about the knowledge of
+others. Enabling re-use of vocabularies and other agent's data is a great good, but it means we have
+to accept we don't always receive what we are familiar with. Openness and processing of (sometimes)
+partial information is wise at any rate here.
+****
+
+
+
+During its lifecycle, the controlled vocabulary will evolve from version to version,
+but at no point will a version numbering scheme -- e.g. SemVer -- be used to aid
+humans in distinguishing versions. Although adopting such as versioning strategy can
+be useful in projects where changes are complex or can easily break things, for
+maintaining a vocabulary such as this one the simplicity of the evolution-based
+strategy is superior. Furthermore, 
+
+Each version of the controlled vocabulary will however record the unique identifier
+which tracks it in the VCS.
+
+Furthermore, note that terms inherently do not have versions. All information stated
+about terms, including their definitions, are part of the ontology that represents the
+controlled vocabulary. Different versions of the vocabulary can provide different
+descriptions of terms, but the terms themselves are identities that themselves do not
+have versions.
+////

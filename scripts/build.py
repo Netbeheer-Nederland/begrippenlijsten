@@ -19,12 +19,6 @@ ANTORA_COMPONENT_DIR = BUILD_DIR / "docs"
 ANTORA_ROOT_MODULE_DIR = ANTORA_COMPONENT_DIR / "modules" / "ROOT"
 ANTORA_PLAYBOOK = Path("antora-playbook.local.yml")
 
-ANTORA_NAV = textwrap.dedent("""
-* xref::guide.adoc[]
-* Begrippenlijsten
-{vocabs}
-""")
-
 
 def generate_skos_ontology(scheme, terms, src_file, dst=None):
     if not dst:
@@ -123,8 +117,13 @@ def read_vocabulary(src_file):
 
 
 def write_nav():
-    nav = ANTORA_NAV.format(vocabs="\n".join(f"** xref::{scheme.with_suffix('.adoc').name}[]" for scheme in VOCABS_SRC_DIR.glob("*.ttl")))
-    (ANTORA_ROOT_MODULE_DIR / "nav.adoc").write_text(nav)
+    with (ANTORA_ROOT_MODULE_DIR / "nav.adoc").open("w") as f:
+        for info_page in SRC_DIR.glob("*.adoc"):
+            if info_page.name != "index.adoc":
+                f.write(f"* xref::{info_page.name}[]\n")
+        f.write(f"* Begrippenlijsten\n")
+        for vocab in VOCABS_SRC_DIR.glob("*.ttl"):
+            f.write(f"** xref::{vocab.with_suffix('.adoc').name}[]")
 
 
 def prepare_build_dir():
