@@ -9,9 +9,7 @@ import shutil
 import jinja2
 from pyoxigraph import Store, parse, RdfFormat, QueryResultsFormat
 
-SCRIPTS_DIR = Path("scripts")
 SRC_DIR = Path("src")
-VOCABS_SRC_DIR = Path("src") / "begrippenlijsten"
 BUILD_DIR = Path("build")
 DOCS_DIR = Path("docs")
 
@@ -19,11 +17,10 @@ ANTORA_COMPONENT_DIR = BUILD_DIR / "docs"
 ANTORA_ROOT_MODULE_DIR = ANTORA_COMPONENT_DIR / "modules" / "ROOT"
 ANTORA_PLAYBOOK = Path("antora-playbook.local.yml")
 
-ANTORA_NAV = textwrap.dedent("""
-* xref::guide.adoc[]
-* Begrippenlijsten
-{vocabs}
-""")
+ANTORA_ROOT_NAV = {
+    "Begrippenlijsten": {},
+    "Versionering": "guide.adoc"
+}
 
 
 def generate_skos_ontology(scheme, terms, src_file, dst=None):
@@ -43,7 +40,7 @@ def generate_shacl_ontology(scheme, terms, src_file, dst=None):
         dst = BUILD_DIR / Path(scheme["notation"]["value"]).with_suffix(".shacl.ttl")
 
     shacl_template = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(SCRIPTS_DIR / "templates")
+        loader=jinja2.FileSystemLoader(".")
     ).get_template("scheme.shacl.ttl.jinja2")
     shacl = shacl_template.render(scheme=scheme, terms=terms)
 
@@ -58,7 +55,7 @@ def generate_antora_page(scheme, terms, src_file, dst=None):
         dst = (BUILD_DIR / scheme["notation"]["value"]).with_suffix(".adoc")
 
     adoc_template = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(SCRIPTS_DIR / "templates")
+        loader=jinja2.FileSystemLoader(".")
     ).get_template("scheme.adoc.jinja2")
 
     adoc = adoc_template.render(scheme=scheme, terms=terms)
@@ -122,9 +119,13 @@ def read_vocabulary(src_file):
     return scheme, terms
 
 
+def expand_nav(scheme_name):
+    ANTORA_ROOT_NAV["Begrippenlijsten"][scheme_name] = f"{scheme_name}.adoc"
+
+
 def write_nav():
-    nav = ANTORA_NAV.format(vocabs="\n".join(f"** xref::{scheme.with_suffix('.adoc').name}[]" for scheme in VOCABS_SRC_DIR.glob("*.ttl")))
-    (ANTORA_ROOT_MODULE_DIR / "nav.adoc").write_text(nav)
+    with (ANTORA_ROOT_MODULE_DIR / "nav.adoc").open("a") as f:
+        f.write(f"* xref::{scheme_name}.adoc[]\n")
 
 
 def prepare_build_dir():
@@ -152,9 +153,12 @@ def create_antora_component():
             ).lstrip()
         )
 
-    # Copy pages
-    for page_file in SRC_DIR.glob("*.adoc"):
-        shutil.copy(page_file, ANTORA_ROOT_MODULE_DIR / "pages")
+    # Create ROOT nav
+    with (ANTORA_ROOT_MODULE_DIR / "nav.adoc").open("wt") as f:
+        f.write("")
+
+    # Copy index page
+    shutil.copy("index.adoc", ANTORA_ROOT_MODULE_DIR / "pages")
 
 
 def relocate_skos_schemes():
@@ -174,8 +178,9 @@ def run_antora():
 def build():
     prepare_build_dir()
     create_antora_component()
+    create_root_nav()
 
-    for src_file in {f for f in VOCABS_SRC_DIR.iterdir() if f.name.endswith(".ttl")}:
+    for src_file in {f for f in SRC_DIR.iterdir() if f.name.endswith(".ttl")}:
         scheme, terms = read_vocabulary(src_file)
         scheme_name = scheme["notation"]["value"]
 
@@ -198,7 +203,7 @@ def build():
             ANTORA_ROOT_MODULE_DIR / "pages" / f"{scheme_name}.adoc",
         )
 
-    write_nav()
+        expand_nav(scheme_name)
 
     run_antora()
     relocate_skos_schemes()
