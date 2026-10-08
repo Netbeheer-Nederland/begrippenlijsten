@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>http://localhost:8000/guide.html</loc>
-<lastmod>2026-10-08T15:06:00.323Z</lastmod>
+<loc>http://localhost:8000/architecture.html</loc>
+<lastmod>2026-10-08T21:48:38.273Z</lastmod>
 </url>
 <url>
 <loc>http://localhost:8000/index.html</loc>
-<lastmod>2026-10-08T15:06:00.323Z</lastmod>
+<lastmod>2026-10-08T21:48:38.273Z</lastmod>
 </url>
 <url>
 <loc>http://localhost:8000/marktpartijen.html</loc>
-<lastmod>2026-10-08T15:06:00.323Z</lastmod>
+<lastmod>2026-10-08T21:48:38.273Z</lastmod>
 </url>
 <url>
-<loc>http://localhost:8000/versioning.html</loc>
-<lastmod>2026-10-08T15:06:00.323Z</lastmod>
+<loc>http://localhost:8000/shacl.html</loc>
+<lastmod>2026-10-08T21:48:38.273Z</lastmod>
 </url>
 </urlset>

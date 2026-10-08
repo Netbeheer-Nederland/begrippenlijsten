@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Architecture</title>
-    <link rel="canonical" href="http://localhost:8000/versioning.html">
-    <link rel="prev" href="guide.html">
+    <link rel="canonical" href="http://localhost:8000/architecture.html">
+    <link rel="prev" href="shacl.html">
     <link rel="next" href="marktpartijen.html">
     <meta name="generator" content="Antora 3.2.1">
     <link rel="stylesheet" href="./_/css/site.css">
@@ -55,10 +55,10 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="guide.html">Usage Guide</a>
+    <a class="nav-link" href="shacl.html">Reusing controlled terms in SHACL enumerations</a>
   </li>
   <li class="nav-item is-current-page" data-depth="1">
-    <a class="nav-link" href="versioning.html">Architecture</a>
+    <a class="nav-link" href="architecture.html">Architecture</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -83,7 +83,7 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">NBNL Begrippenlijsten</a></li>
-    <li><a href="versioning.html">Architecture</a></li>
+    <li><a href="architecture.html">Architecture</a></li>
   </ul>
 </nav>
 </div>
@@ -96,34 +96,42 @@
 <div class="sect1">
 <h2 id="_iri_strategy"><a class="anchor" href="#_iri_strategy"></a>IRI strategy</h2>
 <div class="sectionbody">
+<details class="rationale">
+<summary class="title">Rationale</summary>
+<div class="content">
+<div class="sidebarblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Hash IRIs</strong> are used because they reflect that terms cannot exist without an authoritative vocabulary in which they are described.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> Furthermore they allow for a trivial&#8201;&#8212;&#8201;and frankly, desirable&#8201;&#8212;&#8201;implementation of dereferenceable IRIs, namely by resolving to the web documenation representation of the vocabulary.</p>
+</li>
+<li>
+<p>Regarding the <strong>vocabulary and term names</strong>, although we do recognize the maintenance benefits of using opaque names, <strong>for the benefit of developers we have opted to go for meaningful names</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</details>
 <div class="paragraph">
 <p>Each <strong>controlled vocabulary</strong> is identified by its IRI, and so are each of the terms contained in them:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. IRI templates</caption>
 <colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
 </colgroup>
 <tbody>
 <tr>
-<th class="tableblock halign-left valign-top"><p class="tableblock">Controlled vocabulary</p></th>
+<th class="tableblock halign-left valign-top" colspan="2"><p class="tableblock">Controlled vocabulary</p></th>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}</code></p></td>
 </tr>
 <tr>
-<th class="tableblock halign-left valign-top"><p class="tableblock">Controlled vocabulary term</p></th>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}#{term}</code></p></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Vocabulary representations</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
-</colgroup>
-<tbody>
-<tr>
+<td class="tableblock halign-left valign-top" rowspan="3"><p class="tableblock"><em>Representation</em></p></td>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Web documentation (HTML)</p></th>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}.html</code></p></td>
 </tr>
@@ -134,6 +142,10 @@
 <tr>
 <th class="tableblock halign-left valign-top"><p class="tableblock">SHACL (Turtle)</p></th>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}.shacl.ttl</code></p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="2"><p class="tableblock">Controlled vocabulary term</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>https://modellen.netbeheernederland.nl/begrippenlijsten/{vocabulary}#{term}</code></p></td>
 </tr>
 </tbody>
 </table>
@@ -160,19 +172,74 @@
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>Hash IRIs are used because they reflect that terms cannot exist without an authoritative vocabulary in which they are described.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> Furthermore they allow for a trivial&#8201;&#8212;&#8201;and frankly, desirable&#8201;&#8212;&#8201;implementation of dereferenceable IRIs, namely by resolving to the web documenation representation of the vocabulary.</p>
-</div>
-<div class="paragraph">
-<p>Regarding the vocabulary and term names, although we do recognize the maintenance benefits of using opaque names, for the benefit of developers we have opted to go for meaningful names.</p>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_versioning_strategy"><a class="anchor" href="#_versioning_strategy"></a>Versioning strategy</h2>
 <div class="sectionbody">
+<details class="rationale">
+<summary class="title">Rationale</summary>
+<div class="content">
+<div class="sidebarblock">
+<div class="content">
 <div class="paragraph">
-<p>No release cycle or version number scheme will be used. Instead, controlled vocabularies will simply evolve. This keeps things simple, predictable and maintenable.<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+<p><mark>TODO</mark>: This should be moved to another place.
+<mark>TODO</mark>: This still doesn&#8217;t sit right with me. <strong>The addition of a new term corresponds to functional requirements and demands from the team.</strong> This has to lead to a new data model version, yet no bit would change because it refers to the same external node shape. What do we think of this? On the other hand, just because a new term is allowed does not mean it makes sense to use it here. If it should be prohibited to be used here, then the data model must not use the external node shape but create its own node shape that validates the valid subset of terms for this use case.</p>
+</div>
+<div class="paragraph">
+<p>Suppose the data integration team has a versioned SHACL data model. They decide they want to make use of the SHACL node shape attached with the controlled vocabulary, so that they don&#8217;t have to manually maintain the enumeration. Of course, the controlled vocabulary is not static but evolves. This dynamicity infects the otherwise static version of the team&#8217;s data model, because a part of their model can now change outside of their control. The question is if this is really an issue. Let&#8217;s explore.</p>
+</div>
+<div class="paragraph">
+<p>Terms are never removed, only added, so the only possible changes to the node shape that could occur is the addition of new terms. For things to break on the end of the data integration team, the following sequence of events then needs to occur:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A new term must be added to the controlled vocabulary.</p>
+</li>
+<li>
+<p>One of the data producers adds data that uses this new term.</p>
+</li>
+<li>
+<p>Despite using an older version of the SHACL validation will succeed, despite using
+the integration team uses software to further ETL the data, and this software does not permit extraneous values <em>and</em> has not yet added the new term to the enumeration in the data model.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Only in this scenario will there be an error in the data integration pipeline. Note furthermore:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If a new term is added, typically users are informed about this.</p>
+</li>
+<li>
+<p>Adding data which uses the new term does not come out of the blue. Again, communication, collaboration and planning goes into this, meaning all parties involved are likely in the know.</p>
+</li>
+<li>
+<p>Even if an error occurs, adding the newly permitted term to the enumeration in the data model is trivial.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Interestingly, older and newer versions of the SHACL which import the node shape from the controlled vocabulary will behave equally, namely both import the up-to-date list of terms.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</details>
+<div class="paragraph">
+<p><strong>No release cycle or version number scheme will be used. Instead, in order to keep things simple, predictable and maintenable, controlled vocabularies will simply evolve</strong> <sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup>. New knowledge can always be added, including the introduction of new terms, but changes which alter the meaning or semantic scope of a term or the vocabulary are prohibited. In such cases a new term must be created with its own definition, and (if applicable) the old term can be deprecated. Terms and their definitions are never deleted. This way, any reference to a term or vocabulary will remain valid and accessible indefinitely (FAIR principles F1, A1 and A2).</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -187,43 +254,46 @@ Each modification to the vocabulary <em>does</em> result in a different version 
 </table>
 </div>
 <div class="paragraph">
-<p>Furthermore, it deserves mention that terms themselves do not have versions. Different versions of a vocabulary might provide different descriptions of terms contained in it, but that information is part of the vocabulary (in the form of staements), and do not belong to the terms themselves.</p>
+<p>Furthermore, it deserves mention that terms themselves do not have versions. Different versions of a vocabulary might provide different descriptions of terms contained in it, but <strong>there is no such thing as a "version of a term"</strong>.</p>
 </div>
 <div class="sect2">
 <h3 id="_evolution_rules"><a class="anchor" href="#_evolution_rules"></a>Evolution rules</h3>
 <div class="paragraph">
-<p>The vocabulary evolves according to a set of rules which ensures the vocabulary remains FAIR. But most importantly, identities must be stable, i.e. modifications must not lead to terms or vocabularies obtaining a meaning is no longer compatible with earlier ones.</p>
+<p>The vocabulary evolves according to a set of rules which ensures the it remains semantically consistent and FAIR. Identities must remain stable, i.e. modifications must not lead to terms or vocabularies obtaining a meaning that is no longer compatible with earlier ones.</p>
+</div>
+<div class="paragraph">
+<p>To this end, the following set of rules must be followed:</p>
+</div>
+<div class="paragraph">
+<p><mark>TODO</mark>: Finish this table.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. Changes</caption>
+<caption class="title">Table 2. Rules for evolving</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Safe</th>
-<th class="tableblock halign-left valign-top">Breaking</th>
+<th class="tableblock halign-left valign-top">Allowed</th>
+<th class="tableblock halign-left valign-top">Prohibited</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Adding terms</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Deleting terms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adding knowledge, either about existing terms (e.g. new notes or lifecycle status updates) or including the introduction of new ones</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Removing terms, their definition and preferred labels</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Add or remove notes</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Relocating the term in the taxonomy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Removing knowledge that is not definitions and preferred labels (e.g. notes and alignments)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Changing the preferred label of a term</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Improving descriptions without changing meaning</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Change the preferred label</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Improving a definition whilst retaining backward compatibility</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Changing a definition such that the meaning of term changes incompatibly (e.g. when contradictions arise or the semantic scope has changed completely)</p></td>
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p>Avoid breaking changes by instead deprecating the affected term(s). Then, create new terms and have them supersede the old ones.</p>
-</div>
 </div>
 </div>
 </div>
@@ -237,7 +307,7 @@ Each modification to the vocabulary <em>does</em> result in a different version 
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="guide.html">Usage Guide</a></span>
+  <span class="prev"><a href="shacl.html">Reusing controlled terms in SHACL enumerations</a></span>
   <span class="next"><a href="marktpartijen.html">Marktpartijen</a></span>
 </nav>
 </article>
