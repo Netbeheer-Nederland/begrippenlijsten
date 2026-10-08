@@ -43,6 +43,7 @@ where:
 ****
 
 #TODO#: This should be moved to another place.
+
 #TODO#: This still doesn't sit right with me. *The addition of a new term corresponds to functional requirements and demands from the team.* This has to lead to a new data model version, yet no bit would change because it refers to the same external node shape. What do we think of this? On the other hand, just because a new term is allowed does not mean it makes sense to use it here. If it should be prohibited to be used here, then the data model must not use the external node shape but create its own node shape that validates the valid subset of terms for this use case.
 
 // Let's say you have a data producer (P), a data integration team (I), and a data modeling team (M). M creates a data model in SHACL that P and I use to make sure data conforms to the agreed upon shape.
