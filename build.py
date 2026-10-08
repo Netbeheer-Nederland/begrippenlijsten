@@ -15,6 +15,7 @@ DOCS_DIR = Path("docs")
 
 ANTORA_COMPONENT_DIR = BUILD_DIR / "docs"
 ANTORA_ROOT_MODULE_DIR = ANTORA_COMPONENT_DIR / "modules" / "ROOT"
+ANTORA_PLAYBOOK = Path("antora-playbook.local.yml")
 
 
 def generate_skos_ontology(scheme, terms, src_file, dst=None):
@@ -162,7 +163,7 @@ def relocate_shacl_shapes():
 
 
 def run_antora():
-    os.system("npx antora antora-playbook.local.yml")
+    os.system(f"npx antora {ANTORA_PLAYBOOK}")
 
 
 def build():
